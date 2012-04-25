@@ -14,6 +14,7 @@ use warnings;
 our $LVERSION = do { eval '$VERSION' || "0.001" };  # for development purposes
 
 use Devel::Cover::DB;
+use Devel::Cover::Open_Browser "open_browser";
 use Devel::Cover::Web "write_file";
 
 use Getopt::Long;

@@ -35,6 +35,7 @@ my $Options =
     ignore                   => [],
     ignore_re                => [],
     make                     => $Config{make},
+    open                     => 0,
     report                   => "",
     report_c0                => 75,
     report_c1                => 90,
@@ -68,6 +69,7 @@ sub get_options
                        ignore=s
                        info|i!
                        make=s
+                       open!
                        outputdir=s
                        report_c0=s
                        report_c1=s
@@ -349,7 +351,9 @@ sub main
     };
     @{$Options->{file}} = sort grep $keep->($_), keys %f;
 
-    $format->report($db, $Options)
+    $format->report($db, $Options);
+    $format->open_browser($Options)
+        if $Options->{open} && $format->can('open_browser');
 }
 
 main
@@ -366,7 +370,7 @@ cover - report coverage statistics
        -summary -report report_format -outputdir dir
        -select filename -ignore filename
        -select_re RE -ignore_re RE
-       -write [db] -delete -dump_db
+       -write [db] -delete -dump_db -open
        -silent
        -coverage criterion
        -test -gcov
@@ -400,6 +404,7 @@ The following command line options are supported:
  -summary              - give summary report                (default on)
  -report report_format - report format                      (default html)
  -outputdir            - directory for output               (default db)
+ -open                 - open report (if available)         (default off)
 
  -select filename      - only report on the file            (default all)
  -ignore filename      - don't report on the file           (default none)

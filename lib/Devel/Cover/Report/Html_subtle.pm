@@ -5,6 +5,7 @@ use warnings;
 # VERSION
 
 use Devel::Cover::DB;
+use Devel::Cover::Open_Browser qw( open_browser );
 use Devel::Cover::Truth_Table;
 
 use Getopt::Long;
