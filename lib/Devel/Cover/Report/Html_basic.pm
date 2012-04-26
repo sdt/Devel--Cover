@@ -14,7 +14,7 @@ use warnings;
 our $LVERSION = do { eval '$VERSION' || "0.001" };  # for development purposes
 
 use Devel::Cover::DB;
-use Devel::Cover::Html_Common "launch";
+use Devel::Cover::Html_Common qw( launch output_filepath );
 use Devel::Cover::Web "write_file";
 
 use Getopt::Long;
@@ -88,7 +88,7 @@ sub print_summary
         files => [ "Total", grep $R{db}->summary($_), @{$R{options}{file}} ],
     };
 
-    my $html = "$R{options}{outputdir}/$R{options}{option}{outputfile}";
+    my $html = output_filepath($R{options});
     $Template->process("summary", $vars, $html) or die $Template->error();
 
     $html
@@ -379,14 +379,10 @@ sub print_subroutines
 sub get_options
 {
     my ($self, $opt) = @_;
-    $opt->{option}{outputfile} = "coverage.html";
     $threshold->{$_} = $opt->{"report_$_"} for
         grep { defined $opt->{"report_$_"} } qw( c0 c1 c2 );
-    die "Invalid command line options" unless
-        GetOptions($opt->{option},
-                   qw(
-                       outputfile=s
-                     ));
+
+    Devel::Cover::Html_Common->get_options($opt);
 }
 
 sub report

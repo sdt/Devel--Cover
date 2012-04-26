@@ -5,7 +5,7 @@ use warnings;
 use CGI;
 use Getopt::Long;
 use Devel::Cover::DB;
-use Devel::Cover::Html_Common "launch";
+use Devel::Cover::Html_Common qw( launch output_filepath );
 use Devel::Cover::Truth_Table;
 
 # VERSION
@@ -352,7 +352,7 @@ sub get_link {
 sub print_summary_report {
     my ($db, $options) = @_;
 
-    my $outfile = "$options->{outputdir}/$options->{option}{outputfile}";
+    my $outfile = output_filepath($options);
 
     open(my $fh, '>', $outfile)
         or warn("Unable to open file '$outfile' [$!]\n"), return;
@@ -690,15 +690,11 @@ sub get_options
 {
     my ($self, $opt) = @_;
     $opt->{option}{pod}          = 1;
-    $opt->{option}{outputfile}   = "coverage.html";
     $opt->{option}{summarytitle} = "Coverage Summary";
     $threshold->{$_} = $opt->{"report_$_"} for
         grep { defined $opt->{"report_$_"} } qw( c0 c1 c2 );
-    die "Invalid command line options" unless
-        GetOptions($opt->{option},
-                   qw(
+    Devel::Cover::Html_Common->get_options($opt, qw(
                        data!
-                       outputfile=s
                        pod!
                        summarytitle=s
                        unified!
