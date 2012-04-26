@@ -34,6 +34,7 @@ my $Options =
     gcov                     => $Config{gccversion},
     ignore                   => [],
     ignore_re                => [],
+    launch                   => 0,
     make                     => $Config{make},
     report                   => "",
     report_c0                => 75,
@@ -67,6 +68,7 @@ sub get_options
                        ignore_re=s
                        ignore=s
                        info|i!
+                       launch!
                        make=s
                        outputdir=s
                        report_c0=s
@@ -349,7 +351,9 @@ sub main
     };
     @{$Options->{file}} = sort grep $keep->($_), keys %f;
 
-    $format->report($db, $Options)
+    $format->report($db, $Options);
+    $format->launch($Options)
+        if $Options->{launch} && $format->can('launch');
 }
 
 main
@@ -366,7 +370,7 @@ cover - report coverage statistics
        -summary -report report_format -outputdir dir
        -select filename -ignore filename
        -select_re RE -ignore_re RE
-       -write [db] -delete -dump_db
+       -write [db] -delete -dump_db -launch
        -silent
        -coverage criterion
        -test -gcov
@@ -400,6 +404,7 @@ The following command line options are supported:
  -summary              - give summary report                (default on)
  -report report_format - report format                      (default html)
  -outputdir            - directory for output               (default db)
+ -open                 - open report (if available)         (default off)
 
  -select filename      - only report on the file            (default all)
  -ignore filename      - don't report on the file           (default none)
